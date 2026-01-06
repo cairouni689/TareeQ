@@ -107,11 +107,11 @@
                                 <div class="p-2 bg-orange-100 dark:bg-orange-900/30 text-orange-600 rounded-lg"><i class="fas fa-eye"></i></div>
                             </div>
                         </div>
-                        <!-- Status -->
+                        <!-- Products Count (NEW) -->
                         <div class="bg-white dark:bg-cardDark p-6 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700">
                             <div class="flex justify-between items-start">
-                                <div><p class="text-sm text-gray-500 mb-1">حالة النظام</p><h3 class="text-lg font-bold text-green-500 flex items-center gap-2" id="connection-status"><div class="w-2 h-2 bg-gray-400 rounded-full"></div> جاري...</h3></div>
-                                <div class="p-2 bg-green-100 dark:bg-green-900/30 text-green-600 rounded-lg"><i class="fas fa-server"></i></div>
+                                <div><p class="text-sm text-gray-500 mb-1">عدد المنتجات</p><h3 class="text-2xl font-bold text-indigo-500" id="dashboard-products-count">0</h3></div>
+                                <div class="p-2 bg-indigo-100 dark:bg-indigo-900/30 text-indigo-600 rounded-lg"><i class="fas fa-box-open"></i></div>
                             </div>
                         </div>
                     </div>
@@ -177,7 +177,9 @@
                                         <th class="px-6 py-3">إجراء</th>
                                     </tr>
                                 </thead>
-                                <tbody id="products-table-body" class="divide-y divide-gray-100 dark:divide-gray-700 text-sm"></tbody>
+                                <tbody id="products-table-body" class="divide-y divide-gray-100 dark:divide-gray-700 text-sm">
+                                    <!-- Dynamic Rows -->
+                                </tbody>
                             </table>
                         </div>
                     </div>
@@ -276,10 +278,12 @@
 
         function updateStatus(text, color) {
             const statusEl = document.getElementById('connection-status');
-            const colorClass = color === 'green' ? 'bg-green-500' : 'bg-red-500';
-            const textClass = color === 'green' ? 'text-green-500' : 'text-red-500';
-            statusEl.className = `text-lg font-bold ${textClass} flex items-center gap-2`;
-            statusEl.innerHTML = `<div class="w-3 h-3 ${colorClass} rounded-full animate-pulse"></div> ${text}`;
+            if(statusEl) {
+                const colorClass = color === 'green' ? 'bg-green-500' : 'bg-red-500';
+                const textClass = color === 'green' ? 'text-green-500' : 'text-red-500';
+                statusEl.className = `text-lg font-bold ${textClass} flex items-center gap-2`;
+                statusEl.innerHTML = `<div class="w-3 h-3 ${colorClass} rounded-full animate-pulse"></div> ${text}`;
+            }
         }
 
         // --- Data Fetching ---
@@ -375,6 +379,10 @@
                 
                 const productsDisplay = document.getElementById('total-products-display');
                 if(productsDisplay) productsDisplay.innerText = allProducts.length;
+                
+                // Update Dashboard Home Card
+                const dashProductsCount = document.getElementById('dashboard-products-count');
+                if(dashProductsCount) dashProductsCount.innerText = allProducts.length;
 
                 const tableBody = document.getElementById('products-table-body');
                 if(tableBody) {
