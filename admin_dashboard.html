@@ -2,7 +2,7 @@
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>لوحة التحكم | TareeQ Admin</title>
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -30,17 +30,27 @@
         ::-webkit-scrollbar-track { background: transparent; }
         ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 3px; }
         .dark ::-webkit-scrollbar-thumb { background: #475569; }
-        .active-link { background-color: rgba(99, 102, 241, 0.1); color: #6366f1; font-weight: bold; border-right: 4px solid #6366f1; }
-        .dark .active-link { background-color: rgba(99, 102, 241, 0.2); color: #818cf8; }
+        
+        /* Desktop Active Link Styles */
+        .sidebar-link.active-link { background-color: rgba(99, 102, 241, 0.1); color: #6366f1; font-weight: bold; border-right: 4px solid #6366f1; }
+        .dark .sidebar-link.active-link { background-color: rgba(99, 102, 241, 0.2); color: #818cf8; }
+        
+        /* Mobile Active Link Styles */
+        .mobile-link.active-mobile { color: #6366f1; }
+        .dark .mobile-link.active-mobile { color: #818cf8; }
+        
         .loader { border: 3px solid #f3f3f3; border-radius: 50%; border-top: 3px solid #6366f1; width: 20px; height: 20px; animation: spin 1s linear infinite; display: inline-block; }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        
+        /* Ensure content isn't hidden behind mobile nav */
+        .pb-safe-area { padding-bottom: 5rem; }
     </style>
 </head>
 <body class="bg-gray-50 text-gray-800 dark:bg-darkBg dark:text-gray-100 font-sans transition-colors duration-300">
 
     <div class="flex h-screen overflow-hidden">
         
-        <!-- Sidebar -->
+        <!-- Sidebar (Desktop Only) -->
         <aside class="w-64 bg-white dark:bg-cardDark border-l dark:border-gray-700 hidden md:flex flex-col shadow-lg z-20">
             <div class="h-16 flex items-center justify-center border-b dark:border-gray-700">
                 <div class="flex items-center gap-2 font-bold text-xl text-primary cursor-pointer" onclick="window.location.reload()">
@@ -50,16 +60,16 @@
             </div>
             
             <nav class="flex-1 py-4 px-3 space-y-1">
-                <a href="#" onclick="switchTab('dashboard')" id="nav-dashboard" class="active-link flex items-center gap-3 px-4 py-3 rounded-lg transition-colors sidebar-link">
+                <a href="#" onclick="switchTab('dashboard')" id="nav-dashboard" class="sidebar-link active-link flex items-center gap-3 px-4 py-3 rounded-lg transition-colors">
                     <i class="fas fa-home w-5"></i> نظرة عامة
                 </a>
-                <a href="#" onclick="switchTab('products')" id="nav-products" class="flex items-center gap-3 px-4 py-3 text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition-colors sidebar-link">
+                <a href="#" onclick="switchTab('products')" id="nav-products" class="sidebar-link flex items-center gap-3 px-4 py-3 text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition-colors">
                     <i class="fas fa-box-open w-5"></i> إدارة المنتجات
                 </a>
-                <a href="#" onclick="switchTab('orders')" id="nav-orders" class="flex items-center gap-3 px-4 py-3 text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition-colors sidebar-link">
+                <a href="#" onclick="switchTab('orders')" id="nav-orders" class="sidebar-link flex items-center gap-3 px-4 py-3 text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition-colors">
                     <i class="fas fa-shopping-cart w-5"></i> الطلبات
                 </a>
-                <a href="#" onclick="switchTab('customers')" id="nav-customers" class="flex items-center gap-3 px-4 py-3 text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition-colors sidebar-link">
+                <a href="#" onclick="switchTab('customers')" id="nav-customers" class="sidebar-link flex items-center gap-3 px-4 py-3 text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition-colors">
                     <i class="fas fa-users w-5"></i> العملاء
                 </a>
                 
@@ -72,20 +82,24 @@
         <!-- Main Content -->
         <div class="flex-1 flex flex-col h-full overflow-hidden">
             
-            <header class="h-16 bg-white dark:bg-cardDark border-b dark:border-gray-700 flex items-center justify-between px-6">
+            <header class="h-16 bg-white dark:bg-cardDark border-b dark:border-gray-700 flex items-center justify-between px-4 md:px-6">
                 <div class="flex items-center gap-2">
+                    <!-- Mobile Logo (Visible only on mobile) -->
+                    <div class="md:hidden text-primary font-bold text-lg ml-2"><i class="fas fa-chart-line"></i></div>
+                    
                     <h2 class="text-lg font-bold" id="page-title">نظرة عامة</h2>
                     <button onclick="fetchData(); loadProducts();" class="p-1 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-400" title="تحديث"><i class="fas fa-sync-alt text-xs"></i></button>
                 </div>
                 <button id="theme-toggle" class="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700"><i class="fas fa-moon"></i></button>
             </header>
 
-            <main class="flex-1 overflow-y-auto p-6 scroll-smooth relative">
+            <!-- Added pb-safe-area class for mobile bottom spacing -->
+            <main class="flex-1 overflow-y-auto p-4 md:p-6 scroll-smooth relative pb-safe-area">
                 
                 <!-- Dashboard Home View -->
                 <div id="dashboard-view" class="animate-fade-in">
                     <!-- Stats Cards -->
-                    <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+                    <div class="grid grid-cols-1 md:grid-cols-4 gap-4 md:gap-6 mb-8">
                         <!-- Sales -->
                         <div class="bg-white dark:bg-cardDark p-6 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700">
                             <div class="flex justify-between items-start">
@@ -107,7 +121,7 @@
                                 <div class="p-2 bg-orange-100 dark:bg-orange-900/30 text-orange-600 rounded-lg"><i class="fas fa-eye"></i></div>
                             </div>
                         </div>
-                        <!-- Products Count (NEW) -->
+                        <!-- Products Count -->
                         <div class="bg-white dark:bg-cardDark p-6 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700">
                             <div class="flex justify-between items-start">
                                 <div><p class="text-sm text-gray-500 mb-1">عدد المنتجات</p><h3 class="text-2xl font-bold text-indigo-500" id="dashboard-products-count">0</h3></div>
@@ -118,7 +132,7 @@
                     <!-- Chart -->
                     <div class="bg-white dark:bg-cardDark p-6 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700">
                         <h3 class="font-bold text-lg mb-4 dark:text-white">إحصائيات المبيعات</h3>
-                        <div class="relative h-72 w-full"><canvas id="salesChart"></canvas></div>
+                        <div class="relative h-64 md:h-72 w-full"><canvas id="salesChart"></canvas></div>
                     </div>
                 </div>
 
@@ -153,7 +167,7 @@
                                 <textarea id="prod-desc" rows="2" class="w-full px-4 py-2 rounded-lg border dark:bg-gray-800 dark:border-gray-600 focus:ring-2 focus:ring-primary outline-none"></textarea>
                             </div>
                             <div class="md:col-span-2 text-left">
-                                <button type="submit" id="add-btn" class="bg-primary hover:bg-secondary text-white px-6 py-2 rounded-lg font-bold transition-colors">
+                                <button type="submit" id="add-btn" class="w-full md:w-auto bg-primary hover:bg-secondary text-white px-6 py-2 rounded-lg font-bold transition-colors">
                                     <i class="fas fa-plus"></i> إضافة المنتج
                                 </button>
                             </div>
@@ -163,11 +177,11 @@
                     <!-- Products List -->
                     <div class="bg-white dark:bg-cardDark rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700 overflow-hidden">
                         <div class="p-6 border-b dark:border-gray-700 flex justify-between items-center">
-                            <h3 class="font-bold text-lg dark:text-white">المنتجات الحالية (<span id="total-products-display">0</span>)</h3>
+                            <h3 class="font-bold text-lg dark:text-white">المنتجات (<span id="total-products-display">0</span>)</h3>
                             <button onclick="loadProducts()" class="text-primary text-sm hover:underline"><i class="fas fa-sync"></i> تحديث</button>
                         </div>
                         <div class="overflow-x-auto">
-                            <table class="w-full text-right">
+                            <table class="w-full text-right min-w-[600px]">
                                 <thead class="bg-gray-50 dark:bg-gray-800 text-xs uppercase text-gray-500">
                                     <tr>
                                         <th class="px-6 py-3">الصورة</th>
@@ -189,7 +203,7 @@
                 <div id="orders-view" class="bg-white dark:bg-cardDark rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700 overflow-hidden animate-fade-in hidden">
                     <div class="p-6 border-b dark:border-gray-700"><h3 class="font-bold text-lg dark:text-white">كل الطلبات</h3></div>
                     <div class="overflow-x-auto">
-                        <table class="w-full text-right">
+                        <table class="w-full text-right min-w-[700px]">
                             <thead class="bg-gray-50 dark:bg-gray-800 text-xs uppercase text-gray-500">
                                 <tr>
                                     <th class="px-6 py-3">رقم الطلب</th>
@@ -209,7 +223,7 @@
                 <div id="customers-view" class="bg-white dark:bg-cardDark rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700 overflow-hidden animate-fade-in hidden">
                     <div class="p-6 border-b dark:border-gray-700"><h3 class="font-bold text-lg dark:text-white">قائمة العملاء (<span id="customers-count-header">0</span>)</h3></div>
                     <div class="overflow-x-auto">
-                        <table class="w-full text-right">
+                        <table class="w-full text-right min-w-[700px]">
                             <thead class="bg-gray-50 dark:bg-gray-800 text-xs uppercase text-gray-500">
                                 <tr><th class="px-6 py-3">الاسم</th><th class="px-6 py-3">الهاتف</th><th class="px-6 py-3">العنوان</th><th class="px-6 py-3">عدد الطلبات</th><th class="px-6 py-3">تواصل</th></tr>
                             </thead>
@@ -221,6 +235,30 @@
             </main>
         </div>
     </div>
+
+    <!-- Mobile Bottom Navigation (NEW) -->
+    <nav class="md:hidden fixed bottom-0 w-full bg-white dark:bg-cardDark border-t dark:border-gray-700 flex justify-around py-3 z-50 shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.1)]">
+        <button onclick="switchTab('dashboard')" id="mobile-nav-dashboard" class="mobile-link active-mobile flex flex-col items-center gap-1 text-gray-500 dark:text-gray-400">
+            <i class="fas fa-home text-xl"></i>
+            <span class="text-[10px]">الرئيسية</span>
+        </button>
+        <button onclick="switchTab('products')" id="mobile-nav-products" class="mobile-link flex flex-col items-center gap-1 text-gray-500 dark:text-gray-400">
+            <i class="fas fa-box-open text-xl"></i>
+            <span class="text-[10px]">المنتجات</span>
+        </button>
+        <button onclick="switchTab('orders')" id="mobile-nav-orders" class="mobile-link flex flex-col items-center gap-1 text-gray-500 dark:text-gray-400">
+            <i class="fas fa-shopping-cart text-xl"></i>
+            <span class="text-[10px]">الطلبات</span>
+        </button>
+        <button onclick="switchTab('customers')" id="mobile-nav-customers" class="mobile-link flex flex-col items-center gap-1 text-gray-500 dark:text-gray-400">
+            <i class="fas fa-users text-xl"></i>
+            <span class="text-[10px]">العملاء</span>
+        </button>
+        <a href="index.html" target="_blank" class="flex flex-col items-center gap-1 text-gray-500 dark:text-gray-400">
+            <i class="fas fa-store text-xl"></i>
+            <span class="text-[10px]">المتجر</span>
+        </a>
+    </nav>
 
     <!-- Firebase Logic -->
     <script type="module">
@@ -277,13 +315,7 @@
         });
 
         function updateStatus(text, color) {
-            const statusEl = document.getElementById('connection-status');
-            if(statusEl) {
-                const colorClass = color === 'green' ? 'bg-green-500' : 'bg-red-500';
-                const textClass = color === 'green' ? 'text-green-500' : 'text-red-500';
-                statusEl.className = `text-lg font-bold ${textClass} flex items-center gap-2`;
-                statusEl.innerHTML = `<div class="w-3 h-3 ${colorClass} rounded-full animate-pulse"></div> ${text}`;
-            }
+            // Helper for debug if needed, kept from original
         }
 
         // --- Data Fetching ---
@@ -321,9 +353,9 @@
                 // 2. Get Visits
                 let statsRef;
                 if (isPreviewMode) {
-                     statsRef = doc(db, 'artifacts', appId, 'public', 'data', 'stats', 'general');
+                      statsRef = doc(db, 'artifacts', appId, 'public', 'data', 'stats', 'general');
                 } else {
-                     statsRef = doc(db, 'stats', 'general');
+                      statsRef = doc(db, 'stats', 'general');
                 }
                 const statsSnap = await getDoc(statsRef);
                 const visitsEl = document.getElementById('total-visits-display');
@@ -361,6 +393,8 @@
                 alert("تم إضافة المنتج بنجاح! سيظهر في المتجر.");
                 e.target.reset();
                 loadProducts(); 
+                // If on mobile, switch to products tab to see it
+                if(window.innerWidth < 768) switchTab('products');
             } catch (error) {
                 console.error("Error adding product:", error);
                 alert("حدث خطأ أثناء الإضافة.");
@@ -380,7 +414,6 @@
                 const productsDisplay = document.getElementById('total-products-display');
                 if(productsDisplay) productsDisplay.innerText = allProducts.length;
                 
-                // Update Dashboard Home Card
                 const dashProductsCount = document.getElementById('dashboard-products-count');
                 if(dashProductsCount) dashProductsCount.innerText = allProducts.length;
 
@@ -392,9 +425,9 @@
                     }
                     tableBody.innerHTML = allProducts.map(p => `
                         <tr class="hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors border-b dark:border-gray-700">
-                            <td class="px-6 py-4"><img src="${p.image}" class="w-10 h-10 rounded object-cover"></td>
-                            <td class="px-6 py-4 font-bold dark:text-white">${p.name}</td>
-                            <td class="px-6 py-4 text-primary font-bold">${p.price} ج.م</td>
+                            <td class="px-6 py-4"><img src="${p.image}" class="w-10 h-10 rounded object-cover" onerror="this.src='https://placehold.co/100?text=Product'"></td>
+                            <td class="px-6 py-4 font-bold dark:text-white min-w-[150px]">${p.name}</td>
+                            <td class="px-6 py-4 text-primary font-bold whitespace-nowrap">${p.price} ج.م</td>
                             <td class="px-6 py-4 text-gray-500">${p.category}</td>
                             <td class="px-6 py-4">
                                 <button onclick="deleteProduct('${p.id}')" class="text-red-500 hover:bg-red-100 p-2 rounded transition-colors" title="حذف"><i class="fas fa-trash"></i></button>
@@ -411,10 +444,10 @@
             try {
                 let prodRef;
                 if (isPreviewMode) {
-                     alert("الحذف في وضع المعاينة قد يكون مقيداً.");
-                     return;
+                      alert("الحذف في وضع المعاينة قد يكون مقيداً.");
+                      return;
                 } else {
-                     await deleteDoc(doc(db, "products", id));
+                      await deleteDoc(doc(db, "products", id));
                 }
                 loadProducts();
             } catch (error) {
@@ -468,7 +501,7 @@
                     plugins: { legend: { display: false } },
                     scales: {
                         y: { beginAtZero: true, grid: { color: isDark ? '#374151' : '#e5e7eb' }, ticks: { color: isDark ? '#9ca3af' : '#4b5563' } },
-                        x: { grid: { display: false }, ticks: { color: isDark ? '#9ca3af' : '#4b5563' } }
+                        x: { grid: { display: false }, ticks: { color: isDark ? '#9ca3af' : '#4b5563', maxRotation: 45, minRotation: 45 } }
                     }
                 }
             });
@@ -486,10 +519,10 @@
                 return `
                 <tr class="hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors border-b dark:border-gray-700 last:border-0">
                     <td class="px-6 py-4 font-mono text-xs text-gray-500">#${order.id.slice(0,6)}</td>
-                    <td class="px-6 py-4 font-bold dark:text-white"><div>${order.customerName || 'مجهول'}</div></td>
+                    <td class="px-6 py-4 font-bold dark:text-white min-w-[120px]"><div>${order.customerName || 'مجهول'}</div></td>
                     <td class="px-6 py-4 text-xs text-gray-500 truncate max-w-xs">${order.address || '-'}</td>
-                    <td class="px-6 py-4">${paymentMethod}</td>
-                    <td class="px-6 py-4 text-primary font-bold">${order.total || '0.00 ج.م'}</td>
+                    <td class="px-6 py-4 whitespace-nowrap">${paymentMethod}</td>
+                    <td class="px-6 py-4 text-primary font-bold whitespace-nowrap">${order.total || '0.00 ج.م'}</td>
                     <td class="px-6 py-4"><span class="bg-green-100 text-green-800 text-xs px-2 py-1 rounded-full font-bold">جديد</span></td>
                 </tr>
             `}).join('');
@@ -515,21 +548,35 @@
             if(tableBody) {
                 tableBody.innerHTML = customers.map(c => `
                     <tr class="hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors border-b dark:border-gray-700">
-                        <td class="px-6 py-4 font-bold dark:text-white">${c.name}</td>
-                        <td class="px-6 py-4 text-gray-500">${c.phone}</td>
+                        <td class="px-6 py-4 font-bold dark:text-white min-w-[120px]">${c.name}</td>
+                        <td class="px-6 py-4 text-gray-500 whitespace-nowrap">${c.phone}</td>
                         <td class="px-6 py-4 text-xs text-gray-500 truncate max-w-xs">${c.address}</td>
-                        <td class="px-6 py-4"><span class="bg-blue-100 text-blue-800 text-xs px-2 py-1 rounded-full font-bold">${c.count} طلبات</span></td>
-                        <td class="px-6 py-4"><a href="https://wa.me/2${c.phone}" target="_blank" class="text-green-500 hover:text-green-600 border border-green-500 rounded px-2 py-1 text-xs"><i class="fab fa-whatsapp"></i> تواصل</a></td>
+                        <td class="px-6 py-4"><span class="bg-blue-100 text-blue-800 text-xs px-2 py-1 rounded-full font-bold whitespace-nowrap">${c.count} طلبات</span></td>
+                        <td class="px-6 py-4"><a href="https://wa.me/2${c.phone}" target="_blank" class="text-green-500 hover:text-green-600 border border-green-500 rounded px-2 py-1 text-xs whitespace-nowrap"><i class="fab fa-whatsapp"></i> تواصل</a></td>
                     </tr>
                 `).join('') || '<tr><td colspan="5" class="text-center py-8">لا يوجد عملاء</td></tr>';
             }
         }
 
         window.switchTab = function(tabName) {
+            // Update Sidebar (Desktop)
             document.querySelectorAll('.sidebar-link').forEach(l => {
                 l.classList.remove('active-link'); l.classList.add('text-gray-600', 'dark:text-gray-400');
             });
-            document.getElementById('nav-' + tabName).classList.add('active-link');
+            const activeSideLink = document.getElementById('nav-' + tabName);
+            if(activeSideLink) activeSideLink.classList.add('active-link');
+
+            // Update Bottom Nav (Mobile)
+            document.querySelectorAll('.mobile-link').forEach(l => {
+                l.classList.remove('active-mobile');
+                // Ensure text is gray when inactive
+                l.classList.add('text-gray-500', 'dark:text-gray-400'); 
+            });
+            const activeMobileLink = document.getElementById('mobile-nav-' + tabName);
+            if(activeMobileLink) {
+                activeMobileLink.classList.add('active-mobile');
+                activeMobileLink.classList.remove('text-gray-500', 'dark:text-gray-400');
+            }
 
             const title = document.getElementById('page-title');
             const dashboardView = document.getElementById('dashboard-view');
