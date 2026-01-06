@@ -28,7 +28,6 @@
         .dark ::-webkit-scrollbar-thumb { background: #475569; }
         .active-link { background-color: rgba(99, 102, 241, 0.1); color: #6366f1; font-weight: bold; border-right: 4px solid #6366f1; }
         .dark .active-link { background-color: rgba(99, 102, 241, 0.2); color: #818cf8; }
-        /* Loader */
         .loader { border: 3px solid #f3f3f3; border-radius: 50%; border-top: 3px solid #6366f1; width: 20px; height: 20px; animation: spin 1s linear infinite; display: inline-block; }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
     </style>
@@ -90,10 +89,11 @@
                             <div class="flex justify-between items-start"><div><p class="text-sm text-gray-500 mb-1">الطلبات</p><h3 class="text-2xl font-bold dark:text-white" id="total-orders-display">0</h3></div><div class="p-2 bg-purple-100 dark:bg-purple-900/30 text-purple-600 rounded-lg"><i class="fas fa-shopping-bag"></i></div></div>
                         </div>
                         <div class="bg-white dark:bg-cardDark p-6 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700">
-                            <div class="flex justify-between items-start"><div><p class="text-sm text-gray-500 mb-1">المنتجات</p><h3 class="text-2xl font-bold text-orange-500" id="total-products-display">0</h3></div><div class="p-2 bg-orange-100 dark:bg-orange-900/30 text-orange-600 rounded-lg"><i class="fas fa-box"></i></div></div>
+                            <div class="flex justify-between items-start"><div><p class="text-sm text-gray-500 mb-1">زيارات الموقع</p><h3 class="text-2xl font-bold text-orange-500" id="total-visits-display">0</h3></div><div class="p-2 bg-orange-100 dark:bg-orange-900/30 text-orange-600 rounded-lg"><i class="fas fa-eye"></i></div></div>
                         </div>
+                        <!-- Customers Count -->
                         <div class="bg-white dark:bg-cardDark p-6 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700">
-                            <div class="flex justify-between items-start"><div><p class="text-sm text-gray-500 mb-1">حالة النظام</p><h3 class="text-lg font-bold text-green-500 flex items-center gap-2" id="connection-status"><div class="w-2 h-2 bg-gray-400 rounded-full"></div> جاري...</h3></div><div class="p-2 bg-green-100 dark:bg-green-900/30 text-green-600 rounded-lg"><i class="fas fa-server"></i></div></div>
+                            <div class="flex justify-between items-start"><div><p class="text-sm text-gray-500 mb-1">عدد العملاء</p><h3 class="text-2xl font-bold text-green-500" id="total-customers-display">0</h3></div><div class="p-2 bg-green-100 dark:bg-green-900/30 text-green-600 rounded-lg"><i class="fas fa-users"></i></div></div>
                         </div>
                     </div>
                     <!-- Chart -->
@@ -103,7 +103,7 @@
                     </div>
                 </div>
 
-                <!-- PRODUCTS MANAGEMENT VIEW (NEW) -->
+                <!-- PRODUCTS MANAGEMENT VIEW -->
                 <div id="products-view" class="hidden animate-fade-in space-y-6">
                     <!-- Add Product Form -->
                     <div class="bg-white dark:bg-cardDark p-6 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700">
@@ -200,7 +200,7 @@
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
         import { getAuth, signInWithCustomToken, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-        import { getFirestore, collection, getDocs, addDoc, deleteDoc, doc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+        import { getFirestore, collection, getDocs, addDoc, deleteDoc, doc, getDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
         // Config
         let firebaseConfig;
@@ -245,21 +245,24 @@
             if (user) { 
                 updateStatus("متصل بـ Firebase", "green"); 
                 fetchData(); 
-                loadProducts(); // Load products as well
+                loadProducts(); 
             } 
         });
 
         function updateStatus(text, color) {
             const statusEl = document.getElementById('connection-status');
-            const colorClass = color === 'green' ? 'bg-green-500' : 'bg-red-500';
-            const textClass = color === 'green' ? 'text-green-500' : 'text-red-500';
-            statusEl.className = `text-lg font-bold ${textClass} flex items-center gap-2`;
-            statusEl.innerHTML = `<div class="w-3 h-3 ${colorClass} rounded-full animate-pulse"></div> ${text}`;
+            if(statusEl) {
+                const colorClass = color === 'green' ? 'bg-green-500' : 'bg-red-500';
+                const textClass = color === 'green' ? 'text-green-500' : 'text-red-500';
+                statusEl.className = `text-lg font-bold ${textClass} flex items-center gap-2`;
+                statusEl.innerHTML = `<div class="w-3 h-3 ${colorClass} rounded-full animate-pulse"></div> ${text}`;
+            }
         }
 
         // --- Data Fetching ---
         window.fetchData = async function() {
             try {
+                // 1. Get Orders
                 let ordersRef = isPreviewMode ? collection(db, 'artifacts', appId, 'public', 'data', 'orders') : collection(db, 'orders');
                 const querySnapshot = await getDocs(ordersRef);
                 allOrders = [];
@@ -278,17 +281,38 @@
                     totalSales += priceVal;
                 });
 
-                document.getElementById('total-sales-display').innerText = `$${totalSales.toFixed(2)}`;
-                document.getElementById('total-orders-display').innerText = allOrders.length;
+                // Safety checks for DOM elements
+                const salesEl = document.getElementById('total-sales-display');
+                if(salesEl) salesEl.innerText = `$${totalSales.toFixed(2)}`;
+
+                const ordersEl = document.getElementById('total-orders-display');
+                if(ordersEl) ordersEl.innerText = allOrders.length;
 
                 renderOrdersTable();
                 renderCustomersTable();
                 renderSalesChart();
 
+                // 2. Get Visits
+                let statsRef;
+                if (isPreviewMode) {
+                     statsRef = doc(db, 'artifacts', appId, 'public', 'data', 'stats', 'general');
+                } else {
+                     statsRef = doc(db, 'stats', 'general');
+                }
+                const statsSnap = await getDoc(statsRef);
+                const visitsEl = document.getElementById('total-visits-display');
+                if(visitsEl) {
+                    if (statsSnap.exists()) {
+                         visitsEl.innerText = statsSnap.data().visits || 0;
+                    } else {
+                         visitsEl.innerText = "0";
+                    }
+                }
+
             } catch (error) { console.error("Fetch Error:", error); }
         }
 
-        // --- Product Management (NEW) ---
+        // --- Product Management ---
         window.addNewProduct = async function(e) {
             e.preventDefault();
             const btn = document.getElementById('add-btn');
@@ -310,7 +334,7 @@
                 await addDoc(prodRef, productData);
                 alert("تم إضافة المنتج بنجاح! سيظهر في المتجر.");
                 e.target.reset();
-                loadProducts(); // Refresh list
+                loadProducts(); 
             } catch (error) {
                 console.error("Error adding product:", error);
                 alert("حدث خطأ أثناء الإضافة.");
@@ -326,26 +350,28 @@
                 const snapshot = await getDocs(prodRef);
                 allProducts = [];
                 snapshot.forEach(doc => allProducts.push({ id: doc.id, ...doc.data() }));
-
-                document.getElementById('total-products-display').innerText = allProducts.length;
                 
-                const tableBody = document.getElementById('products-table-body');
-                if(allProducts.length === 0) {
-                    tableBody.innerHTML = '<tr><td colspan="5" class="text-center py-4">لا توجد منتجات مضافة بعد.</td></tr>';
-                    return;
-                }
+                const productsDisplay = document.getElementById('total-products-display');
+                if(productsDisplay) productsDisplay.innerText = allProducts.length;
 
-                tableBody.innerHTML = allProducts.map(p => `
-                    <tr class="hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors border-b dark:border-gray-700">
-                        <td class="px-6 py-4"><img src="${p.image}" class="w-10 h-10 rounded object-cover"></td>
-                        <td class="px-6 py-4 font-bold dark:text-white">${p.name}</td>
-                        <td class="px-6 py-4 text-primary font-bold">${p.price} ج.م</td>
-                        <td class="px-6 py-4 text-gray-500">${p.category}</td>
-                        <td class="px-6 py-4">
-                            <button onclick="deleteProduct('${p.id}')" class="text-red-500 hover:bg-red-100 p-2 rounded transition-colors"><i class="fas fa-trash"></i></button>
-                        </td>
-                    </tr>
-                `).join('');
+                const tableBody = document.getElementById('products-table-body');
+                if(tableBody) {
+                    if(allProducts.length === 0) {
+                        tableBody.innerHTML = '<tr><td colspan="5" class="text-center py-4">لا توجد منتجات مضافة بعد.</td></tr>';
+                        return;
+                    }
+                    tableBody.innerHTML = allProducts.map(p => `
+                        <tr class="hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors border-b dark:border-gray-700">
+                            <td class="px-6 py-4"><img src="${p.image}" class="w-10 h-10 rounded object-cover"></td>
+                            <td class="px-6 py-4 font-bold dark:text-white">${p.name}</td>
+                            <td class="px-6 py-4 text-primary font-bold">${p.price} ج.م</td>
+                            <td class="px-6 py-4 text-gray-500">${p.category}</td>
+                            <td class="px-6 py-4">
+                                <button onclick="deleteProduct('${p.id}')" class="text-red-500 hover:bg-red-100 p-2 rounded transition-colors"><i class="fas fa-trash"></i></button>
+                            </td>
+                        </tr>
+                    `).join('');
+                }
 
             } catch (error) { console.error("Error loading products:", error); }
         }
@@ -355,8 +381,6 @@
             try {
                 let prodRef;
                 if (isPreviewMode) {
-                     // Deleting in canvas/preview needs exact path used in addDoc logic via library, simplified here for prod mainly
-                     // Actually delete needs document reference
                      alert("الحذف في وضع المعاينة قد يكون مقيداً.");
                      return;
                 } else {
@@ -365,14 +389,17 @@
                 loadProducts();
             } catch (error) {
                 console.error("Delete error:", error);
-                alert("تم الحذف بنجاح (أو حدث خطأ في الصلاحيات).");
-                loadProducts(); // Reload anyway
+                alert("حدث خطأ في الحذف.");
+                loadProducts(); 
             }
         }
 
         // --- Renderers ---
         function renderSalesChart() {
-            const ctx = document.getElementById('salesChart').getContext('2d');
+            const ctxEl = document.getElementById('salesChart');
+            if(!ctxEl) return; 
+
+            const ctx = ctxEl.getContext('2d');
             const days = {};
             for(let i=6; i>=0; i--) {
                 const d = new Date(); d.setDate(d.getDate() - i);
@@ -419,6 +446,8 @@
 
         function renderOrdersTable() {
             const tableBody = document.getElementById('orders-table-body');
+            if(!tableBody) return;
+
             if (allOrders.length === 0) { tableBody.innerHTML = `<tr><td colspan="5" class="text-center py-8 text-gray-500">لا توجد طلبات حتى الآن</td></tr>`; return; }
             tableBody.innerHTML = allOrders.map(order => `
                 <tr class="hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors border-b dark:border-gray-700 last:border-0">
@@ -442,16 +471,22 @@
                 }
             });
             const customers = Array.from(customersMap.values()).filter(c => c.phone !== 'unknown');
+            
+            const custEl = document.getElementById('total-customers-display');
+            if(custEl) custEl.innerText = customers.length;
+            
             const tableBody = document.getElementById('customers-table-body');
-            tableBody.innerHTML = customers.map(c => `
-                <tr class="hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors border-b dark:border-gray-700">
-                    <td class="px-6 py-4 font-bold dark:text-white">${c.name}</td>
-                    <td class="px-6 py-4 text-gray-500">${c.phone}</td>
-                    <td class="px-6 py-4 text-xs text-gray-500 truncate max-w-xs">${c.address}</td>
-                    <td class="px-6 py-4"><span class="bg-blue-100 text-blue-800 text-xs px-2 py-1 rounded-full font-bold">${c.count} طلبات</span></td>
-                    <td class="px-6 py-4"><a href="https://wa.me/2${c.phone}" target="_blank" class="text-green-500 hover:text-green-600 border border-green-500 rounded px-2 py-1 text-xs"><i class="fab fa-whatsapp"></i> تواصل</a></td>
-                </tr>
-            `).join('') || '<tr><td colspan="5" class="text-center py-8">لا يوجد عملاء</td></tr>';
+            if(tableBody) {
+                tableBody.innerHTML = customers.map(c => `
+                    <tr class="hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors border-b dark:border-gray-700">
+                        <td class="px-6 py-4 font-bold dark:text-white">${c.name}</td>
+                        <td class="px-6 py-4 text-gray-500">${c.phone}</td>
+                        <td class="px-6 py-4 text-xs text-gray-500 truncate max-w-xs">${c.address}</td>
+                        <td class="px-6 py-4"><span class="bg-blue-100 text-blue-800 text-xs px-2 py-1 rounded-full font-bold">${c.count} طلبات</span></td>
+                        <td class="px-6 py-4"><a href="https://wa.me/2${c.phone}" target="_blank" class="text-green-500 hover:text-green-600 border border-green-500 rounded px-2 py-1 text-xs"><i class="fab fa-whatsapp"></i> تواصل</a></td>
+                    </tr>
+                `).join('') || '<tr><td colspan="5" class="text-center py-8">لا يوجد عملاء</td></tr>';
+            }
         }
 
         window.switchTab = function(tabName) {
