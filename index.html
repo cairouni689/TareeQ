@@ -225,18 +225,37 @@
         </div>
     </div>
 
+    <!-- START OF EDITED HERO SECTION -->
     <section id="home" class="relative pt-44 pb-12 sm:pt-32 sm:pb-16 lg:pb-24 overflow-hidden">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-            <div class="lg:grid lg:grid-cols-12 lg:gap-8 items-center">
-                <div class="sm:text-center md:max-w-2xl md:mx-auto lg:col-span-6 lg:text-right reveal">
-                    <h1 class="text-4xl tracking-tight font-extrabold text-slate-900 dark:text-white sm:text-5xl md:text-6xl lg:text-5xl xl:text-6xl"><span class="block xl:inline">أناقة طريقك</span> <span class="block text-primary">مع TareeQ</span></h1>
-                    <p class="mt-3 text-base text-slate-600 dark:text-gray-300 sm:mt-5 sm:text-lg sm:max-w-xl sm:mx-auto md:mt-5 md:text-xl lg:mx-0">اكتشف أحدث صيحات الموضة والأزياء العصرية بجودة عالية.</p>
-                    <div class="mt-8 flex flex-col sm:flex-row gap-4 justify-center lg:justify-start"><a href="#products" class="px-8 py-3 rounded-full text-white bg-primary hover:bg-secondary shadow-lg transform hover:-translate-y-1 transition-all">تصفح الملابس</a><button onclick="openTrackingModal()" class="px-8 py-3 rounded-full text-primary bg-primary/10 hover:bg-primary/20 transition-all">تتبع طلبك</button></div>
+            <!-- Changed from grid to flex-col and centered -->
+            <div class="flex flex-col items-center justify-center text-center">
+                
+                <!-- Text Content -->
+                <div class="max-w-3xl mx-auto reveal mb-10">
+                    <h1 class="text-4xl tracking-tight font-extrabold text-slate-900 dark:text-white sm:text-5xl md:text-6xl lg:text-6xl">
+                        <span class="block">أناقة طريقك</span> 
+                        <span class="block text-primary mt-2">مع TareeQ</span>
+                    </h1>
+                    <p class="mt-6 text-base text-slate-600 dark:text-gray-300 sm:text-lg md:text-xl max-w-2xl mx-auto leading-relaxed">
+                        اكتشف أحدث صيحات الموضة والأزياء العصرية بجودة عالية تناسب جميع الأذواق.
+                    </p>
+                    <div class="mt-8 flex flex-col sm:flex-row gap-4 justify-center">
+                        <a href="#products" class="px-8 py-4 rounded-full text-white bg-primary hover:bg-secondary shadow-lg transform hover:-translate-y-1 transition-all text-lg font-bold min-w-[180px]">تصفح الملابس</a>
+                        <button onclick="openTrackingModal()" class="px-8 py-4 rounded-full text-primary bg-primary/10 hover:bg-primary/20 transition-all text-lg font-bold min-w-[180px]">تتبع طلبك</button>
+                    </div>
                 </div>
-                <div class="mt-12 lg:mt-0 lg:col-span-6 reveal delay-200"><img class="w-full rounded-lg shadow-2xl transform rotate-3 hover:rotate-0 transition-all duration-500" src="https://images.unsplash.com/photo-1483985988355-763728e1935b?w=800&q=80" alt="Hero Fashion"></div>
+
+                <!-- Image Content (Stacked Below) -->
+                <div class="w-full max-w-4xl mx-auto reveal delay-200">
+                    <!-- Added rotate-3, hover:rotate-0, and cursor-pointer -->
+                    <img class="w-full rounded-2xl shadow-2xl transform rotate-3 hover:rotate-0 hover:scale-[1.01] transition-all duration-500 border-4 border-white dark:border-gray-700 cursor-pointer" src="https://images.unsplash.com/photo-1483985988355-763728e1935b?w=1200&q=80" alt="Hero Fashion">
+                </div>
+
             </div>
         </div>
     </section>
+    <!-- END OF EDITED HERO SECTION -->
 
     <section class="py-8 bg-white dark:bg-cardDark/50 border-b border-slate-200 dark:border-gray-700">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
