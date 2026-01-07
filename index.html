@@ -489,11 +489,49 @@
             }
         }
 
-        // Data & Vars - CHANGED PRODUCT IMAGES (SWAPPED BLACK/BROWN)
+        // Data & Vars - تم تحديث الصور المصغرة هنا
         let products = [
-            { id: 1, name: 'olive green sweatshirt " TareeQ', price: 600.00, image: "https://i.postimg.cc/PJGgvXJJ/5974238847077911439.jpg", category: "أزياء", description: "قطعة أزياء عصرية وخامات عالية الجودة.", badge: "خصم" },
-            { id: 2, name: 'Black sweatshirt " TareeQ "', price: 600.00, image: "https://i.postimg.cc/k4WjZxJp/5974238847077911436.jpg", category: "أزياء", description: "تصميم فريد يجمع بين الراحة والأناقة.", badge: "خصم" },
-            { id: 3, name: 'Brown sweatshirt " TareeQ "', price: 600.00, image: "https://i.postimg.cc/pVD71tyR/5974238847077911440.jpg", category: "أزياء", description: "إضافة مميزة لخزانتك، خامة ممتازة.", badge: "خصم" }
+            { 
+                id: 1, 
+                name: 'olive green sweatshirt " TareeQ', 
+                price: 600.00, 
+                image: "https://i.postimg.cc/PJGgvXJJ/5974238847077911439.jpg", 
+                category: "أزياء", 
+                description: "قطعة أزياء عصرية وخامات عالية الجودة.", 
+                badge: "خصم",
+                // الصور الإضافية للزيتوني
+                extraImages: [
+                    "https://i.postimg.cc/v8N0yY1L/5978915538182277992.jpg",
+                    "https://i.postimg.cc/MpTRpRh6/5978915538182277988.jpg"
+                ]
+            },
+            { 
+                id: 2, 
+                name: 'Black sweatshirt " TareeQ "', 
+                price: 600.00, 
+                image: "https://i.postimg.cc/k4WjZxJp/5974238847077911436.jpg", 
+                category: "أزياء", 
+                description: "تصميم فريد يجمع بين الراحة والأناقة.", 
+                badge: "خصم",
+                // الصور الإضافية للأسود
+                extraImages: [
+                    "https://i.postimg.cc/sfY0Yd19/5978915538182277986.jpg"
+                ]
+            },
+            { 
+                id: 3, 
+                name: 'Brown sweatshirt " TareeQ "', 
+                price: 600.00, 
+                image: "https://i.postimg.cc/pVD71tyR/5974238847077911440.jpg", 
+                category: "أزياء", 
+                description: "إضافة مميزة لخزانتك، خامة ممتازة.", 
+                badge: "خصم",
+                // الصور الإضافية للبني
+                extraImages: [
+                    "https://i.postimg.cc/qvPRH30k/5978915538182277993.jpg",
+                    "https://i.postimg.cc/NG2QB0JT/5978915538182277982.jpg"
+                ]
+            }
         ];
 
         let cart = [];
@@ -655,12 +693,27 @@
         window.openProductModal = function(id) {
             const p = products.find(x => x.id == id); if(!p) return;
             addToRecentlyViewed(p.id);
+            
+            // البيانات الأساسية
             document.getElementById('modal-img').src=p.image;
             document.getElementById('modal-title').textContent=p.name;
             document.getElementById('modal-desc').textContent=p.description;
             document.getElementById('modal-price').textContent=`${p.price} ج.م`;
             document.getElementById('modal-category').textContent=p.category;
-            document.getElementById('thumb-1').src=p.image; document.getElementById('thumb-2').src=p.image; document.getElementById('thumb-3').src=p.image;
+            
+            // --- كود تحديث الصور المصغرة (Thumbnails) ---
+            const extras = p.extraImages || []; // جلب الصور الإضافية إن وجدت
+
+            // الصورة المصغرة 1: دائماً نعرض الصورة الرئيسية للمنتج
+            document.getElementById('thumb-1').src = p.image;
+            
+            // الصورة المصغرة 2: نعرض أول صورة إضافية (إذا لم توجد نعرض الرئيسية)
+            document.getElementById('thumb-2').src = extras.length > 0 ? extras[0] : p.image;
+            
+            // الصورة المصغرة 3: نعرض ثاني صورة إضافية (إذا لم توجد نكرر الأولى أو الرئيسية)
+            document.getElementById('thumb-3').src = extras.length > 1 ? extras[1] : (extras.length > 0 ? extras[0] : p.image);
+            // ------------------------------------------
+
             const related = products.filter(i => i.category===p.category && i.id!=p.id).slice(0,3);
             const relContainer = document.getElementById('related-products');
             relContainer.innerHTML = related.length ? related.map(rp => `<div class="cursor-pointer group" onclick="openProductModal('${rp.id}')"><img src="${rp.image}" class="w-full h-20 object-cover rounded-lg mb-1 group-hover:opacity-80 transition-opacity"><p class="text-xs font-bold truncate dark:text-white">${rp.name}</p><p class="text-xs text-primary">${rp.price} ج.م</p></div>`).join('') : '<p class="text-xs text-slate-400 col-span-3">لا توجد منتجات مشابهة.</p>';
