@@ -135,11 +135,9 @@
             <div class="inline-block align-bottom bg-white dark:bg-cardDark rounded-2xl text-right overflow-hidden shadow-2xl transform transition-all sm:my-8 sm:align-middle sm:max-w-4xl sm:w-full relative animate-fade-in-up">
                 <button onclick="closeProductModal()" class="absolute top-4 left-4 z-10 p-2 bg-black/10 hover:bg-black/20 rounded-full dark:text-white transition-colors"><i class="fas fa-times"></i></button>
                 <div class="grid grid-cols-1 md:grid-cols-2 max-h-[90vh] overflow-y-auto">
-                    <!-- Adjusted Image Container: sticky only on md (desktop), normal flow on mobile -->
                     <div class="bg-slate-100 dark:bg-gray-800 p-4 md:sticky md:top-0 h-fit">
                         <div class="img-zoom-container h-80 w-full mb-4 rounded-lg overflow-hidden border border-slate-200 dark:border-gray-700"><img id="modal-img" src="" alt="" class="w-full h-full object-cover"></div>
                         <div class="flex gap-2 justify-center">
-                            <!-- Added onclick to the first thumbnail -->
                             <img id="thumb-1" src="" class="w-16 h-16 object-cover rounded border-2 border-transparent hover:border-primary cursor-pointer transition-all" onclick="changeMainImage(this.src)">
                             <img id="thumb-2" src="" class="w-16 h-16 object-cover rounded border-2 border-transparent hover:border-primary cursor-pointer transition-all" onclick="changeMainImage(this.src)">
                             <img id="thumb-3" src="" class="w-16 h-16 object-cover rounded border-2 border-transparent hover:border-primary cursor-pointer transition-all" onclick="changeMainImage(this.src)">
@@ -151,7 +149,7 @@
                         <p id="modal-desc" class="text-slate-600 dark:text-gray-300 mb-6 leading-relaxed text-lg"></p>
                         <div class="flex items-center justify-between mb-8 pb-8 border-b border-slate-100 dark:border-gray-700">
                             <div class="flex flex-col">
-                                <span class="text-sm text-slate-400 line-through">600.00 ج.م</span>
+                                <span class="text-sm text-slate-400 line-through">650.00 ج.م</span>
                                 <span id="modal-price" class="text-3xl font-bold text-primary"></span>
                             </div>
                             <button id="modal-add-btn" class="bg-primary hover:bg-secondary text-white font-bold py-3 px-8 rounded-full shadow-lg flex items-center gap-2 transform active:scale-95 transition-transform"><i class="fas fa-shopping-cart"></i> إضافة للسلة</button>
@@ -231,13 +229,10 @@
         </div>
     </div>
 
-    <!-- START OF EDITED HERO SECTION -->
     <section id="home" class="relative pt-44 pb-12 sm:pt-32 sm:pb-16 lg:pb-24 overflow-hidden">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-            <!-- Changed from grid to flex-col and centered -->
             <div class="flex flex-col items-center justify-center text-center">
                 
-                <!-- Text Content -->
                 <div class="max-w-3xl mx-auto reveal mb-10">
                     <h1 class="text-4xl tracking-tight font-extrabold text-slate-900 dark:text-white sm:text-5xl md:text-6xl lg:text-6xl">
                         <span class="block">أناقة طريقك</span> 
@@ -252,17 +247,13 @@
                     </div>
                 </div>
 
-                <!-- Image Content (Stacked Below) -->
                 <div class="w-full max-w-4xl mx-auto reveal delay-200">
-                    <!-- Added rotate-3, hover:rotate-0, and cursor-pointer -->
                     <img class="w-full rounded-2xl shadow-2xl transform rotate-3 hover:rotate-0 hover:scale-[1.01] transition-all duration-500 border-4 border-white dark:border-gray-700 cursor-pointer" src="https://images.unsplash.com/photo-1483985988355-763728e1935b?w=1200&q=80" alt="Hero Fashion">
                 </div>
 
             </div>
         </div>
     </section>
-    <!-- END OF EDITED HERO SECTION -->
-
     <section class="py-8 bg-white dark:bg-cardDark/50 border-b border-slate-200 dark:border-gray-700">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <h3 class="text-lg font-bold text-slate-900 dark:text-white mb-4 px-2">الأقسام</h3>
@@ -278,7 +269,17 @@
         <div class="absolute inset-0 bg-black/10"></div>
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 flex flex-col md:flex-row items-center justify-between gap-8">
             <div class="text-center md:text-right"><h2 class="text-3xl font-extrabold mb-2"><i class="fas fa-bolt text-yellow-300 animate-pulse"></i> عروض TareeQ</h2><p class="text-red-100 text-lg">خصومات حصرية على التشكيلة الجديدة!</p></div>
-            <div class="flex gap-4 text-center"><div class="bg-white/20 backdrop-blur rounded-lg p-3 min-w-[70px]"><span id="hours" class="block text-3xl font-bold">02</span><span class="text-xs uppercase">ساعة</span></div><div class="bg-white/20 backdrop-blur rounded-lg p-3 min-w-[70px]"><span id="minutes" class="block text-3xl font-bold">45</span><span class="text-xs uppercase">دقيقة</span></div><div class="bg-white/20 backdrop-blur rounded-lg p-3 min-w-[70px]"><span id="seconds" class="block text-3xl font-bold">12</span><span class="text-xs uppercase">ثانية</span></div></div>
+            <div class="flex gap-4 text-center">
+                <div class="bg-white/20 backdrop-blur rounded-lg p-3 min-w-[70px]">
+                    <span id="hours" class="block text-3xl font-bold">00</span><span class="text-xs uppercase">ساعة</span>
+                </div>
+                <div class="bg-white/20 backdrop-blur rounded-lg p-3 min-w-[70px]">
+                    <span id="minutes" class="block text-3xl font-bold">00</span><span class="text-xs uppercase">دقيقة</span>
+                </div>
+                <div class="bg-white/20 backdrop-blur rounded-lg p-3 min-w-[70px]">
+                    <span id="seconds" class="block text-3xl font-bold">00</span><span class="text-xs uppercase">ثانية</span>
+                </div>
+            </div>
             <a href="#products" class="bg-white text-red-600 px-8 py-3 rounded-full font-bold shadow-lg hover:bg-gray-100 transition-colors transform hover:scale-105">تسوق الآن</a>
         </div>
     </section>
@@ -286,8 +287,36 @@
     <section class="py-16 bg-slate-50 dark:bg-gray-800/50">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <h2 class="text-3xl font-bold text-slate-900 dark:text-white mb-8 border-r-4 border-primary pr-4">🔥 باقات التوفير</h2>
-            <div class="flex items-center justify-center h-64 bg-white dark:bg-cardDark rounded-2xl shadow-sm border border-slate-200 dark:border-gray-700">
-                <p class="text-xl font-bold text-slate-500 dark:text-gray-400">سيتم إضافة المحتوى قريباً ⏳</p>
+            
+            <div class="bg-white dark:bg-cardDark rounded-3xl shadow-xl overflow-hidden border border-slate-200 dark:border-gray-700 flex flex-col md:flex-row relative group">
+                
+                <div class="absolute top-4 right-4 bg-green-500 text-white text-xs font-bold px-3 py-1 rounded-full z-10 animate-pulse shadow-lg">
+                    <i class="fas fa-truck ml-1"></i> شحن مجاني
+                </div>
+
+                <div class="w-full md:w-1/2 bg-gray-100 dark:bg-gray-900 h-80 relative flex items-center justify-center overflow-hidden">
+                    <div class="absolute w-full h-full bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] opacity-10"></div>
+                    <img src="https://i.postimg.cc/PJGgvXJJ/5974238847077911439.jpg" class="w-48 h-64 object-cover rounded-xl shadow-2xl border-4 border-white dark:border-gray-700 absolute left-10 md:left-20 transform -rotate-6 transition-transform group-hover:rotate-0 z-10">
+                    <img src="https://i.postimg.cc/pVD71tyR/5974238847077911440.jpg" class="w-48 h-64 object-cover rounded-xl shadow-2xl border-4 border-white dark:border-gray-700 absolute right-10 md:right-20 transform rotate-6 transition-transform group-hover:rotate-0">
+                </div>
+
+                <div class="w-full md:w-1/2 p-8 flex flex-col justify-center text-right">
+                    <h3 class="text-2xl font-bold text-slate-900 dark:text-white mb-2">عرض الصحاب (2 تيشيرت)</h3>
+                    <p class="text-slate-500 dark:text-gray-400 mb-6 leading-relaxed">
+                        اختار أي قطعتين من الكولكشن الجديد واستفيد بخصم مميز وشحن مجاني لحد باب البيت. خامات قطنية عالية الجودة تناسب الصيف.
+                    </p>
+                    
+                    <div class="flex items-end gap-4 mb-8">
+                        <div class="flex flex-col">
+                            <span class="text-sm text-slate-400 line-through mb-1">1400 ج.م</span>
+                            <span class="text-4xl font-bold text-primary">1200 ج.م</span>
+                        </div>
+                    </div>
+
+                    <button onclick="addBundleToCart()" class="w-full bg-slate-900 dark:bg-primary text-white font-bold py-4 rounded-xl shadow-lg hover:bg-slate-800 dark:hover:bg-secondary transition-all transform hover:-translate-y-1 flex justify-center items-center gap-2">
+                        <i class="fas fa-shopping-bag"></i> اطلب العرض الآن
+                    </button>
+                </div>
             </div>
         </div>
     </section>
@@ -458,11 +487,11 @@
             }
         }
 
-        // Data & Vars
+        // Data & Vars - CHANGED PRICE TO 600
         let products = [
-            { id: 1, name: "موديل أنيق 1", price: 550.00, image: "https://i.postimg.cc/PJGgvXJJ/5974238847077911439.jpg", category: "أزياء", description: "قطعة أزياء عصرية وخامات عالية الجودة.", badge: "خصم" },
-            { id: 2, name: "موديل أنيق 2", price: 550.00, image: "https://i.postimg.cc/pVD71tyR/5974238847077911440.jpg", category: "أزياء", description: "تصميم فريد يجمع بين الراحة والأناقة.", badge: "خصم" },
-            { id: 3, name: "موديل أنيق 3", price: 550.00, image: "https://i.postimg.cc/k4WjZxJp/5974238847077911436.jpg", category: "أزياء", description: "إضافة مميزة لخزانتك، خامة ممتازة.", badge: "خصم" }
+            { id: 1, name: "موديل أنيق 1", price: 600.00, image: "https://i.postimg.cc/PJGgvXJJ/5974238847077911439.jpg", category: "أزياء", description: "قطعة أزياء عصرية وخامات عالية الجودة.", badge: "خصم" },
+            { id: 2, name: "موديل أنيق 2", price: 600.00, image: "https://i.postimg.cc/pVD71tyR/5974238847077911440.jpg", category: "أزياء", description: "تصميم فريد يجمع بين الراحة والأناقة.", badge: "خصم" },
+            { id: 3, name: "موديل أنيق 3", price: 600.00, image: "https://i.postimg.cc/k4WjZxJp/5974238847077911436.jpg", category: "أزياء", description: "إضافة مميزة لخزانتك، خامة ممتازة.", badge: "خصم" }
         ];
 
         let cart = [];
@@ -487,6 +516,33 @@
             const details = document.getElementById('card-details');
             if(method === 'card') details.classList.remove('hidden');
             else details.classList.add('hidden');
+        }
+
+        // --- COUNTDOWN TIMER LOGIC ---
+        window.startCountdown = function() {
+            // Set timer for 24 hours from now (to keep it active)
+            const countDownDate = new Date().getTime() + (24 * 60 * 60 * 1000);
+
+            const x = setInterval(function() {
+                const now = new Date().getTime();
+                // To make it look like a daily deal, we can calculate time until next midnight
+                // But for this example, we'll just loop a 24h countdown or use a fixed one.
+                // Here is a simple loop logic:
+                let distance = countDownDate - now;
+                
+                // Reset if passed
+                if (distance < 0) {
+                   distance = 24 * 60 * 60 * 1000;
+                }
+
+                const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+                const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+                document.getElementById("hours").innerHTML = hours < 10 ? "0" + hours : hours;
+                document.getElementById("minutes").innerHTML = minutes < 10 ? "0" + minutes : minutes;
+                document.getElementById("seconds").innerHTML = seconds < 10 ? "0" + seconds : seconds;
+            }, 1000);
         }
 
         // --- Reviews Logic ---
@@ -564,7 +620,8 @@
                 grid.innerHTML = list.map((p, idx) => {
                     const liked = wishlist.includes(p.id) ? 'fas text-red-500' : 'far text-gray-400';
                     const badge = p.badge ? `<div class="absolute top-2 left-2 bg-red-500 text-white text-xs font-bold px-2 py-1 rounded shadow-md z-10">${p.badge}</div>` : '';
-                    return `<div class="product-card group bg-white dark:bg-cardDark rounded-2xl shadow-sm hover:shadow-xl transition-all duration-300 overflow-hidden border border-slate-200 dark:border-gray-700 flex flex-col reveal fade-enter" style="animation-delay: ${idx*0.05}s"><div class="relative pt-[100%] overflow-hidden bg-slate-100 dark:bg-gray-800">${badge}<img src="${p.image}" class="absolute top-0 left-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110 cursor-pointer" onclick="openProductModal('${p.id}')"><button onclick="toggleWishlist('${p.id}')" class="absolute top-3 right-3 bg-white/80 dark:bg-black/50 p-2 rounded-full z-10 hover:bg-white transition-all transform hover:scale-110 wishlist-btn ${liked.includes('fas')?'active':''}"><i class="${liked} fa-heart text-lg"></i></button></div><div class="p-5 flex flex-col flex-1"><div class="text-xs text-slate-400 mb-1">${p.category}</div><h3 class="text-lg font-bold text-slate-900 dark:text-white mb-2 line-clamp-1 cursor-pointer hover:text-primary transition-colors" onclick="openProductModal('${p.id}')">${p.name}</h3><div class="mt-auto flex justify-between items-center"><div class="flex flex-col"><span class="text-xs line-through text-slate-400">600.00 ج.م</span><span class="text-xl font-bold text-primary">${parseFloat(p.price).toFixed(2)} ج.م</span></div><button onclick="addToCart('${p.id}')" class="bg-slate-100 dark:bg-gray-700 p-2 rounded-full hover:bg-primary hover:text-white transition-colors"><i class="fas fa-plus"></i></button></div></div></div>`;
+                    // UPDATED: Price display 650 (crossed) -> actual price
+                    return `<div class="product-card group bg-white dark:bg-cardDark rounded-2xl shadow-sm hover:shadow-xl transition-all duration-300 overflow-hidden border border-slate-200 dark:border-gray-700 flex flex-col reveal fade-enter" style="animation-delay: ${idx*0.05}s"><div class="relative pt-[100%] overflow-hidden bg-slate-100 dark:bg-gray-800">${badge}<img src="${p.image}" class="absolute top-0 left-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110 cursor-pointer" onclick="openProductModal('${p.id}')"><button onclick="toggleWishlist('${p.id}')" class="absolute top-3 right-3 bg-white/80 dark:bg-black/50 p-2 rounded-full z-10 hover:bg-white transition-all transform hover:scale-110 wishlist-btn ${liked.includes('fas')?'active':''}"><i class="${liked} fa-heart text-lg"></i></button></div><div class="p-5 flex flex-col flex-1"><div class="text-xs text-slate-400 mb-1">${p.category}</div><h3 class="text-lg font-bold text-slate-900 dark:text-white mb-2 line-clamp-1 cursor-pointer hover:text-primary transition-colors" onclick="openProductModal('${p.id}')">${p.name}</h3><div class="mt-auto flex justify-between items-center"><div class="flex flex-col"><span class="text-xs line-through text-slate-400">650.00 ج.م</span><span class="text-xl font-bold text-primary">${parseFloat(p.price).toFixed(2)} ج.م</span></div><button onclick="addToCart('${p.id}')" class="bg-slate-100 dark:bg-gray-700 p-2 rounded-full hover:bg-primary hover:text-white transition-colors"><i class="fas fa-plus"></i></button></div></div></div>`;
                 }).join('');
                 initObserver();
             }, useSkeleton ? 800 : 0);
@@ -695,13 +752,13 @@
         document.getElementById('theme-toggle').onclick = () => { document.documentElement.classList.toggle('dark'); const i=document.querySelector('#theme-toggle i'); if(document.documentElement.classList.contains('dark')) i.className='fas fa-sun text-yellow-300 text-lg'; else i.className='fas fa-moon text-slate-600 text-lg'; };
 
         // Init Calls
-        // Load static products first, then try to fetch dynamic ones
         renderProducts(products, true); 
-        fetchProductsFromDB(); // Try to get dynamic products
+        fetchProductsFromDB(); 
         updateWishlistUI(); 
         renderRecentlyViewed(); 
-        fetchReviews(); // Fetch reviews on load
+        fetchReviews(); 
         initObserver();
+        startCountdown(); // Start the timer
     </script>
 </body>
 </html>
