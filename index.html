@@ -133,7 +133,7 @@
                         <div class="mb-6">
                             <div class="flex justify-between items-center mb-2">
                                 <h3 class="text-sm font-bold text-slate-900 dark:text-white">اختر المقاس:</h3>
-                                <span id="modal-stock" class="text-xs font-bold text-red-500"></span>
+                                <span id="modal-stock" class="text-xs font-bold font-mono tracking-wide"></span>
                             </div>
                             <div class="flex gap-3" id="size-selector">
                                 <button onclick="selectSize('L')" id="size-L" class="size-btn w-12 h-10 rounded-lg border-2 border-slate-300 dark:border-gray-600 dark:text-white flex items-center justify-center font-bold hover:border-primary transition-all">L</button>
@@ -485,8 +485,6 @@
                     return;
                 }
 
-                // FIXED: Divide total distance by hour ms to get total hours (e.g. 47)
-                // Removed the % (24h) modulo that was causing it to loop every 24h
                 const hours = Math.floor(distance / (1000 * 60 * 60));
                 const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
                 const seconds = Math.floor((distance % (1000 * 60)) / 1000);
@@ -602,8 +600,10 @@
                     const liked = wishlist.includes(p.id) ? 'fas text-red-500' : 'far text-gray-400';
                     const badge = p.badge ? `<div class="absolute top-2 left-2 bg-red-500 text-white text-xs font-bold px-2 py-1 rounded shadow-md z-10 animate-pulse">${p.badge}</div>` : '';
                     const oldPrice = p.oldPrice ? `<span class="text-xs line-through text-slate-400 block">${p.oldPrice.toFixed(2)} ج.م</span>` : '';
-                    // Stock Logic display
-                    const stockMsg = p.stock > 0 ? `<span class="text-xs text-red-500 font-bold block mt-1">باقي ${p.stock} قطع فقط!</span>` : `<span class="text-xs text-gray-400 font-bold block mt-1">نفذت الكمية</span>`;
+                    // Stock Logic display - CHANGED TO MINIMAL STYLE
+                    const stockMsg = p.stock > 0 
+                        ? `<p class="text-[10px] font-black text-red-600 tracking-[0.2em] uppercase mt-2"><i class="fas fa-circle text-[6px] align-middle mr-1 animate-pulse"></i>LIMITED STOCK</p>` 
+                        : `<p class="text-[10px] font-bold text-gray-400 tracking-[0.2em] uppercase mt-2">SOLD OUT</p>`;
                     const btnDisable = p.stock === 0 ? 'opacity-50 cursor-not-allowed' : '';
 
                     return `<div class="product-card group bg-white dark:bg-cardDark rounded-2xl shadow-sm hover:shadow-xl transition-all duration-300 overflow-hidden border border-slate-200 dark:border-gray-700 flex flex-col reveal fade-enter" style="animation-delay: ${idx*0.05}s"><div class="relative pt-[100%] overflow-hidden bg-slate-100 dark:bg-gray-800">${badge}<img src="${p.image}" class="absolute top-0 left-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110 cursor-pointer" onclick="openProductModal('${p.id}')"><button onclick="toggleWishlist('${p.id}')" class="absolute top-3 right-3 bg-white/80 dark:bg-black/50 p-2 rounded-full z-10 hover:bg-white transition-all transform hover:scale-110 wishlist-btn ${liked.includes('fas')?'active':''}"><i class="${liked} fa-heart text-lg"></i></button></div><div class="p-5 flex flex-col flex-1"><div class="text-xs text-slate-400 mb-1">${p.category}</div><h3 class="text-lg font-bold text-slate-900 dark:text-white mb-2 line-clamp-1 cursor-pointer hover:text-primary transition-colors" onclick="openProductModal('${p.id}')">${p.name}</h3>${stockMsg}<div class="mt-auto flex justify-between items-center"><div class="flex flex-col">${oldPrice}<span class="text-xl font-bold text-primary">${parseFloat(p.price).toFixed(2)} ج.م</span></div><button onclick="${p.stock > 0 ? `openProductModal('${p.id}')` : ''}" class="bg-slate-100 dark:bg-gray-700 p-2 rounded-full hover:bg-primary hover:text-white transition-colors ${btnDisable}"><i class="fas fa-plus"></i></button></div></div></div>`;
@@ -647,19 +647,19 @@
             document.getElementById('modal-price').textContent=`${p.price} ج.م`;
             document.getElementById('modal-category').textContent=p.category;
             
-            // Stock Modal Display
+            // Stock Modal Display - CHANGED TO MINIMAL STYLE
             const stockEl = document.getElementById('modal-stock');
             const addBtn = document.getElementById('modal-add-btn');
             
             if (p.stock > 0) {
-                stockEl.textContent = `متبقي ${p.stock} قطع`;
-                stockEl.className = "text-xs font-bold text-red-500";
+                stockEl.innerHTML = `<i class="fas fa-circle text-[8px] text-red-500 animate-pulse mr-2"></i>LIMITED STOCK`;
+                stockEl.className = "text-sm font-black text-slate-800 dark:text-white tracking-[0.25em] uppercase";
                 addBtn.disabled = false;
                 addBtn.classList.remove('opacity-50', 'cursor-not-allowed');
                 addBtn.innerHTML = '<i class="fas fa-shopping-cart"></i> إضافة للسلة';
             } else {
-                stockEl.textContent = "نفذت الكمية";
-                stockEl.className = "text-xs font-bold text-gray-500";
+                stockEl.textContent = "SOLD OUT";
+                stockEl.className = "text-sm font-bold text-gray-500 uppercase tracking-wide";
                 addBtn.disabled = true;
                 addBtn.classList.add('opacity-50', 'cursor-not-allowed');
                 addBtn.innerHTML = 'نفذت الكمية';
