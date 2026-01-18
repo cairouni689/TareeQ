@@ -43,9 +43,10 @@
         .img-zoom-container img { transition: transform 0.3s ease; }
         .img-zoom-container:hover img { transform: scale(1.5); }
         .size-btn.selected { background-color: #6366f1; color: white; border-color: #6366f1; }
+        .size-btn.disabled { opacity: 0.5; cursor: not-allowed; position: relative; overflow: hidden; background-color: #f3f4f6; color: #9ca3af; border-color: #d1d5db; }
+        .size-btn.disabled::after { content: ""; position: absolute; top: 50%; left: 0; width: 100%; height: 2px; background: #ef4444; transform: rotate(-45deg); }
         .hidden { display: none !important; }
         .rating-star.active { color: #facc15; }
-        /* Timer Styles */
         .timer-box { background: linear-gradient(45deg, #ef4444, #f87171); color: white; border-radius: 8px; padding: 5px 10px; font-weight: bold; min-width: 40px; text-align: center; }
     </style>
 </head>
@@ -53,7 +54,7 @@
 
     <div id="toast-container" class="fixed top-24 left-4 z-[100] flex flex-col gap-3 pointer-events-none"></div>
 
-    <a href="https://wa.me/201144378103" target="_blank" class="fixed bottom-6 left-6 z-50 bg-green-500 text-white w-14 h-14 rounded-full shadow-2xl flex items-center justify-center hover:bg-green-600 transition-all transform hover:scale-110 hover:rotate-12 animate-bounce-slow">
+    <a href="https://wa.me/201029628023" target="_blank" class="fixed bottom-6 left-6 z-50 bg-green-500 text-white w-14 h-14 rounded-full shadow-2xl flex items-center justify-center hover:bg-green-600 transition-all transform hover:scale-110 hover:rotate-12 animate-bounce-slow">
         <i class="fab fa-whatsapp text-3xl"></i>
     </a>
 
@@ -135,10 +136,19 @@
                                 <h3 class="text-sm font-bold text-slate-900 dark:text-white">اختر المقاس:</h3>
                                 <span id="modal-stock" class="text-xs font-bold font-mono tracking-wide"></span>
                             </div>
-                            <div class="flex gap-3" id="size-selector">
-                                <button onclick="selectSize('L')" id="size-L" class="size-btn w-12 h-10 rounded-lg border-2 border-slate-300 dark:border-gray-600 dark:text-white flex items-center justify-center font-bold hover:border-primary transition-all">L</button>
-                                <button onclick="selectSize('XL')" id="size-XL" class="size-btn w-12 h-10 rounded-lg border-2 border-slate-300 dark:border-gray-600 dark:text-white flex items-center justify-center font-bold hover:border-primary transition-all">XL</button>
-                                <button onclick="selectSize('2XL')" id="size-2XL" class="size-btn w-12 h-10 rounded-lg border-2 border-slate-300 dark:border-gray-600 dark:text-white flex items-center justify-center font-bold hover:border-primary transition-all">2XL</button>
+                            <div class="flex flex-wrap gap-3" id="size-selector">
+                                <div class="flex flex-col items-center">
+                                    <button onclick="selectSize('L')" id="size-L" class="size-btn w-12 h-10 rounded-lg border-2 border-slate-300 dark:border-gray-600 dark:text-white flex items-center justify-center font-bold hover:border-primary transition-all">L</button>
+                                    <span class="text-[10px] mt-1 text-slate-500">50 - 75 كيلو</span>
+                                </div>
+                                <div class="flex flex-col items-center">
+                                    <button onclick="selectSize('XL')" id="size-XL" class="size-btn w-12 h-10 rounded-lg border-2 border-slate-300 dark:border-gray-600 dark:text-white flex items-center justify-center font-bold hover:border-primary transition-all">XL</button>
+                                    <span class="text-[10px] mt-1 text-slate-500">75 - 105 كيلو</span>
+                                </div>
+                                <div class="flex flex-col items-center">
+                                    <button disabled id="size-2XL" class="size-btn disabled w-12 h-10 rounded-lg border-2 border-slate-300 dark:border-gray-600 flex items-center justify-center font-bold">2XL</button>
+                                    <span class="text-[10px] mt-1 text-red-500 font-bold">نفذت الكمية</span>
+                                </div>
                             </div>
                             <p id="size-error" class="text-red-500 text-xs mt-2 hidden">يرجى اختيار المقاس</p>
                         </div>
@@ -460,17 +470,15 @@
         let wishlist = [];
         let currentSelectedSize = 'L'; 
 
-        // --- TIMER LOGIC (UPDATED FOR 48H) ---
+        // --- TIMER LOGIC (STICKY 48H) ---
         function startOfferTimer() {
-            // Using v2 key to reset the timer for you
-            let endTime = localStorage.getItem('offerEndTime_v2');
+            let endTime = localStorage.getItem('offerEndTime_TareeQ');
             
             if (!endTime) {
-                // If no timer exists, set one for 48 hours from now
                 const now = new Date().getTime();
-                const duration = 48 * 60 * 60 * 1000; // 48 hours in milliseconds
+                const duration = 48 * 60 * 60 * 1000; 
                 endTime = now + duration;
-                localStorage.setItem('offerEndTime_v2', endTime);
+                localStorage.setItem('offerEndTime_TareeQ', endTime);
             }
 
             const x = setInterval(function() {
@@ -513,16 +521,10 @@
             const method = document.querySelector('input[name="payment"]:checked').value;
             const cardDetails = document.getElementById('card-details');
             const vfDetails = document.getElementById('vodafone-details');
-            
-            // Hide all first
             cardDetails.classList.add('hidden');
             vfDetails.classList.add('hidden');
-
-            if(method === 'card') {
-                cardDetails.classList.remove('hidden');
-            } else if (method === 'vodafone') {
-                vfDetails.classList.remove('hidden');
-            }
+            if(method === 'card') cardDetails.classList.remove('hidden');
+            else if (method === 'vodafone') vfDetails.classList.remove('hidden');
         }
 
         // --- Reviews Logic ---
@@ -540,23 +542,14 @@
             const name = document.getElementById('review-name').value;
             const rating = document.getElementById('selected-rating').value;
             const text = document.getElementById('review-text').value;
-
             if (rating == 0) return showToast("الرجاء اختيار التقييم (عدد النجوم)", "error");
-
             try {
                 await addDoc(collection(db, 'reviews'), {
-                    name: name,
-                    rating: parseInt(rating),
-                    text: text,
-                    date: new Date().toISOString()
+                    name: name, rating: parseInt(rating), text: text, date: new Date().toISOString()
                 });
                 showToast("تم نشر تقييمك بنجاح! شكراً لك.", "success");
-                e.target.reset();
-                window.setRating(0);
-            } catch (error) {
-                console.error(error);
-                showToast("حدث خطأ أثناء النشر.", "error");
-            }
+                e.target.reset(); window.setRating(0);
+            } catch (error) { showToast("حدث خطأ أثناء النشر.", "error"); }
         }
 
         function fetchReviews() {
@@ -569,21 +562,7 @@
                 container.innerHTML = snapshot.docs.map(doc => {
                     const r = doc.data();
                     const stars = Array(5).fill(0).map((_, i) => i < r.rating ? '<i class="fas fa-star text-yellow-400 text-xs"></i>' : '<i class="far fa-star text-gray-300 text-xs"></i>').join('');
-                    return `
-                        <div class="bg-slate-50 dark:bg-gray-800 p-4 rounded-xl border border-slate-200 dark:border-gray-700 break-words overflow-hidden">
-                            <div class="flex justify-between items-start mb-2">
-                                <div class="flex items-center gap-2">
-                                    <div class="w-8 h-8 rounded-full bg-primary/10 text-primary flex items-center justify-center font-bold text-sm">${r.name.charAt(0)}</div>
-                                    <div>
-                                        <h4 class="font-bold text-sm text-slate-900 dark:text-white">${r.name}</h4>
-                                        <div class="flex gap-0.5 mt-0.5">${stars}</div>
-                                    </div>
-                                </div>
-                                <span class="text-xs text-gray-400">${new Date(r.date).toLocaleDateString('ar-EG')}</span>
-                            </div>
-                            <p class="text-sm text-slate-600 dark:text-gray-300 whitespace-normal">${r.text}</p>
-                        </div>
-                    `;
+                    return `<div class="bg-slate-50 dark:bg-gray-800 p-4 rounded-xl border border-slate-200 dark:border-gray-700 break-words overflow-hidden"><div class="flex justify-between items-start mb-2"><div class="flex items-center gap-2"><div class="w-8 h-8 rounded-full bg-primary/10 text-primary flex items-center justify-center font-bold text-sm">${r.name.charAt(0)}</div><div><h4 class="font-bold text-sm text-slate-900 dark:text-white">${r.name}</h4><div class="flex gap-0.5 mt-0.5">${stars}</div></div></div><span class="text-xs text-gray-400">${new Date(r.date).toLocaleDateString('ar-EG')}</span></div><p class="text-sm text-slate-600 dark:text-gray-300 whitespace-normal">${r.text}</p></div>`;
                 }).join('');
             });
         }
@@ -600,13 +579,8 @@
                     const liked = wishlist.includes(p.id) ? 'fas text-red-500' : 'far text-gray-400';
                     const badge = p.badge ? `<div class="absolute top-2 left-2 bg-red-500 text-white text-xs font-bold px-2 py-1 rounded shadow-md z-10 animate-pulse">${p.badge}</div>` : '';
                     const oldPrice = p.oldPrice ? `<span class="text-xs line-through text-slate-400 block">${p.oldPrice.toFixed(2)} ج.م</span>` : '';
-                    // Stock Logic display - CHANGED TO MINIMAL STYLE
-                    const stockMsg = p.stock > 0 
-                        ? `<p class="text-[10px] font-black text-red-600 tracking-[0.2em] uppercase mt-2"><i class="fas fa-circle text-[6px] align-middle mr-1 animate-pulse"></i>LIMITED STOCK</p>` 
-                        : `<p class="text-[10px] font-bold text-gray-400 tracking-[0.2em] uppercase mt-2">SOLD OUT</p>`;
-                    const btnDisable = p.stock === 0 ? 'opacity-50 cursor-not-allowed' : '';
-
-                    return `<div class="product-card group bg-white dark:bg-cardDark rounded-2xl shadow-sm hover:shadow-xl transition-all duration-300 overflow-hidden border border-slate-200 dark:border-gray-700 flex flex-col reveal fade-enter" style="animation-delay: ${idx*0.05}s"><div class="relative pt-[100%] overflow-hidden bg-slate-100 dark:bg-gray-800">${badge}<img src="${p.image}" class="absolute top-0 left-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110 cursor-pointer" onclick="openProductModal('${p.id}')"><button onclick="toggleWishlist('${p.id}')" class="absolute top-3 right-3 bg-white/80 dark:bg-black/50 p-2 rounded-full z-10 hover:bg-white transition-all transform hover:scale-110 wishlist-btn ${liked.includes('fas')?'active':''}"><i class="${liked} fa-heart text-lg"></i></button></div><div class="p-5 flex flex-col flex-1"><div class="text-xs text-slate-400 mb-1">${p.category}</div><h3 class="text-lg font-bold text-slate-900 dark:text-white mb-2 line-clamp-1 cursor-pointer hover:text-primary transition-colors" onclick="openProductModal('${p.id}')">${p.name}</h3>${stockMsg}<div class="mt-auto flex justify-between items-center"><div class="flex flex-col">${oldPrice}<span class="text-xl font-bold text-primary">${parseFloat(p.price).toFixed(2)} ج.م</span></div><button onclick="${p.stock > 0 ? `openProductModal('${p.id}')` : ''}" class="bg-slate-100 dark:bg-gray-700 p-2 rounded-full hover:bg-primary hover:text-white transition-colors ${btnDisable}"><i class="fas fa-plus"></i></button></div></div></div>`;
+                    const stockMsg = p.stock > 0 ? `<p class="text-[10px] font-black text-red-600 tracking-[0.2em] uppercase mt-2"><i class="fas fa-circle text-[6px] align-middle mr-1 animate-pulse"></i>LIMITED STOCK</p>` : `<p class="text-[10px] font-bold text-gray-400 tracking-[0.2em] uppercase mt-2">SOLD OUT</p>`;
+                    return `<div class="product-card group bg-white dark:bg-cardDark rounded-2xl shadow-sm hover:shadow-xl transition-all duration-300 overflow-hidden border border-slate-200 dark:border-gray-700 flex flex-col reveal fade-enter" style="animation-delay: ${idx*0.05}s"><div class="relative pt-[100%] overflow-hidden bg-slate-100 dark:bg-gray-800">${badge}<img src="${p.image}" class="absolute top-0 left-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110 cursor-pointer" onclick="openProductModal('${p.id}')"><button onclick="toggleWishlist('${p.id}')" class="absolute top-3 right-3 bg-white/80 dark:bg-black/50 p-2 rounded-full z-10 hover:bg-white transition-all transform hover:scale-110 wishlist-btn ${liked.includes('fas')?'active':''}"><i class="${liked} fa-heart text-lg"></i></button></div><div class="p-5 flex flex-col flex-1"><div class="text-xs text-slate-400 mb-1">${p.category}</div><h3 class="text-lg font-bold text-slate-900 dark:text-white mb-2 line-clamp-1 cursor-pointer hover:text-primary transition-colors" onclick="openProductModal('${p.id}')">${p.name}</h3>${stockMsg}<div class="mt-auto flex justify-between items-center"><div class="flex flex-col">${oldPrice}<span class="text-xl font-bold text-primary">${parseFloat(p.price).toFixed(2)} ج.م</span></div><button onclick="openProductModal('${p.id}')" class="bg-slate-100 dark:bg-gray-700 p-2 rounded-full hover:bg-primary hover:text-white transition-colors ${p.stock === 0 ? 'opacity-50' : ''}"><i class="fas fa-plus"></i></button></div></div></div>`;
                 }).join('');
                 initObserver();
             }, useSkeleton ? 800 : 0);
@@ -616,68 +590,49 @@
             try {
                 let productsRef = collection(db, 'products');
                 const snapshot = await getDocs(productsRef);
-                
                 if (!snapshot.empty) {
-                    let dbProducts = [];
-                    snapshot.forEach(doc => {
-                        dbProducts.push({ id: doc.id, ...doc.data() });
-                    });
-                    console.log("Fetched products from DB");
+                    let dbProducts = []; snapshot.forEach(doc => { dbProducts.push({ id: doc.id, ...doc.data() }); });
                 } 
-            } catch (error) {
-                console.error("Error fetching products:", error);
-            }
+            } catch (error) { console.error("Error fetching products:", error); }
         }
 
         window.selectSize = function(size) {
             currentSelectedSize = size;
-            document.querySelectorAll('.size-btn').forEach(btn => btn.classList.remove('selected'));
-            document.getElementById(`size-${size}`).classList.add('selected');
+            document.querySelectorAll('.size-btn').forEach(btn => {
+                if(!btn.classList.contains('disabled')) btn.classList.remove('selected');
+            });
+            const target = document.getElementById(`size-${size}`);
+            if(target && !target.classList.contains('disabled')) target.classList.add('selected');
         }
 
         window.openProductModal = function(id) {
             const p = products.find(x => x.id == id); if(!p) return;
-            addToRecentlyViewed(p.id);
-            
-            selectSize('L');
-
+            addToRecentlyViewed(p.id); selectSize('L');
             document.getElementById('modal-img').src=p.image;
             document.getElementById('modal-title').textContent=p.name;
             document.getElementById('modal-desc').textContent=p.description;
             document.getElementById('modal-price').textContent=`${p.price} ج.م`;
             document.getElementById('modal-category').textContent=p.category;
-            
-            // Stock Modal Display - CHANGED TO MINIMAL STYLE
             const stockEl = document.getElementById('modal-stock');
             const addBtn = document.getElementById('modal-add-btn');
-            
             if (p.stock > 0) {
                 stockEl.innerHTML = `<i class="fas fa-circle text-[8px] text-red-500 animate-pulse mr-2"></i>LIMITED STOCK`;
                 stockEl.className = "text-sm font-black text-slate-800 dark:text-white tracking-[0.25em] uppercase";
-                addBtn.disabled = false;
-                addBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+                addBtn.disabled = false; addBtn.classList.remove('opacity-50', 'cursor-not-allowed');
                 addBtn.innerHTML = '<i class="fas fa-shopping-cart"></i> إضافة للسلة';
             } else {
-                stockEl.textContent = "SOLD OUT";
-                stockEl.className = "text-sm font-bold text-gray-500 uppercase tracking-wide";
-                addBtn.disabled = true;
-                addBtn.classList.add('opacity-50', 'cursor-not-allowed');
+                stockEl.textContent = "SOLD OUT"; stockEl.className = "text-sm font-bold text-gray-500 uppercase tracking-wide";
+                addBtn.disabled = true; addBtn.classList.add('opacity-50', 'cursor-not-allowed');
                 addBtn.innerHTML = 'نفذت الكمية';
             }
-
             const extras = p.extraImages || [];
             document.getElementById('thumb-1').src = p.image;
             document.getElementById('thumb-2').src = extras.length > 0 ? extras[0] : p.image;
             document.getElementById('thumb-3').src = extras.length > 1 ? extras[1] : (extras.length > 0 ? extras[0] : p.image);
-
             const related = products.filter(i => i.category===p.category && i.id!=p.id).slice(0,3);
             const relContainer = document.getElementById('related-products');
             relContainer.innerHTML = related.length ? related.map(rp => `<div class="cursor-pointer group" onclick="openProductModal('${rp.id}')"><img src="${rp.image}" class="w-full h-20 object-cover rounded-lg mb-1 group-hover:opacity-80 transition-opacity"><p class="text-xs font-bold truncate dark:text-white">${rp.name}</p><p class="text-xs text-primary">${rp.price} ج.م</p></div>`).join('') : '<p class="text-xs text-slate-400 col-span-3">لا توجد منتجات مشابهة.</p>';
-            
-            document.getElementById('modal-add-btn').onclick = () => { 
-                addToCart(p.id, currentSelectedSize); 
-                closeProductModal(); 
-            };
+            document.getElementById('modal-add-btn').onclick = () => { addToCart(p.id, currentSelectedSize); closeProductModal(); };
             document.getElementById('product-modal').classList.remove('hidden');
         }
         window.closeProductModal = function() { document.getElementById('product-modal').classList.add('hidden'); }
@@ -686,34 +641,18 @@
         window.addToCart = function(id, size = 'L') {
             const p = products.find(x=>x.id==id); 
             if(p.stock <= 0) return showToast("عذراً، نفذت الكمية!", "error");
-
-            // Check total quantity in cart for this product ID
             const existingItems = cart.filter(x => x.id == id);
             const totalInCart = existingItems.reduce((sum, item) => sum + item.quantity, 0);
-
-            if (totalInCart >= p.stock) {
-                return showToast(`عذراً، المتاح فقط ${p.stock} قطع`, "error");
-            }
-
+            if (totalInCart >= p.stock) return showToast(`عذراً، المتاح فقط ${p.stock} قطع`, "error");
             const ex = cart.find(x => x.id == id && x.size == size);
-            
-            if(ex) {
-                ex.quantity++; 
-            } else {
-                cart.push({...p, quantity:1, size: size});
-            }
-            
-            updateCartUI(); 
-            showToast("تمت الإضافة للسلة بنجاح 🛒");
+            if(ex) ex.quantity++; 
+            else cart.push({...p, quantity:1, size: size});
+            updateCartUI(); showToast("تمت الإضافة للسلة بنجاح 🛒");
             const sb=document.getElementById('cart-sidebar'); if(sb.classList.contains('-translate-x-full')) toggleCart();
         }
 
         window.toggleCart = function() { const sb=document.getElementById('cart-sidebar'); sb.classList.toggle('-translate-x-full'); sb.classList.toggle('translate-x-0'); }
-        
-        window.removeFromCart = function(id, size) { 
-            cart = cart.filter(i => !(i.id == id && i.size == size)); 
-            updateCartUI(); 
-        }
+        window.removeFromCart = function(id, size) { cart = cart.filter(i => !(i.id == id && i.size == size)); updateCartUI(); }
         
         window.updateCartUI = function() {
             document.getElementById('cart-count').textContent = cart.reduce((s,i)=>s+i.quantity,0);
@@ -721,20 +660,7 @@
             document.getElementById('cart-total').textContent = `${total.toFixed(2)} ج.م`;
             const container = document.getElementById('cart-items');
             if(cart.length===0) container.innerHTML = `<div class="text-center py-10 text-slate-500"><i class="fas fa-shopping-basket text-6xl mb-4 opacity-50"></i><p>السلة فارغة</p></div>`;
-            else container.innerHTML = cart.map(i => `
-                <div class="flex gap-4 p-3 bg-slate-50 dark:bg-gray-800 rounded-lg border border-slate-200 dark:border-gray-700">
-                    <img src="${i.image}" class="w-16 h-16 object-cover rounded-md">
-                    <div class="flex-1">
-                        <h4 class="text-sm font-semibold dark:text-white line-clamp-1">${i.name}</h4>
-                        <span class="text-xs bg-gray-200 dark:bg-gray-700 px-2 py-0.5 rounded text-gray-600 dark:text-gray-300 font-bold">المقاس: ${i.size}</span>
-                        <div class="flex justify-between items-center mt-2">
-                            <span class="text-primary font-bold">${(i.price*i.quantity).toFixed(2)} ج.م</span>
-                            <span class="text-xs font-bold dark:text-white">x${i.quantity}</span>
-                        </div>
-                    </div>
-                    <button onclick="removeFromCart('${i.id}', '${i.size}')" class="text-slate-400 hover:text-red-500"><i class="fas fa-trash-alt text-xs"></i></button>
-                </div>
-            `).join('');
+            else container.innerHTML = cart.map(i => `<div class="flex gap-4 p-3 bg-slate-50 dark:bg-gray-800 rounded-lg border border-slate-200 dark:border-gray-700"><img src="${i.image}" class="w-16 h-16 object-cover rounded-md"><div class="flex-1"><h4 class="text-sm font-semibold dark:text-white line-clamp-1">${i.name}</h4><span class="text-xs bg-gray-200 dark:bg-gray-700 px-2 py-0.5 rounded text-gray-600 dark:text-gray-300 font-bold">المقاس: ${i.size}</span><div class="flex justify-between items-center mt-2"><span class="text-primary font-bold">${(i.price*i.quantity).toFixed(2)} ج.م</span><span class="text-xs font-bold dark:text-white">x${i.quantity}</span></div></div><button onclick="removeFromCart('${i.id}', '${i.size}')" class="text-slate-400 hover:text-red-500"><i class="fas fa-trash-alt text-xs"></i></button></div>`).join('');
         }
 
         window.toggleWishlist = function(id) {
@@ -752,63 +678,28 @@
 
         window.openCheckout = function() { if(!cart.length) return showToast("السلة فارغة!", "error"); toggleCart(); document.getElementById('checkout-modal').classList.remove('hidden'); updateCheckoutTotal(); }
         window.closeCheckout = function() { document.getElementById('checkout-modal').classList.add('hidden'); }
-        
         window.updateCheckoutTotal = function() {
             const total = cart.reduce((s,i)=>s+(parseFloat(i.price)*i.quantity),0);
             document.getElementById('checkout-total').textContent = `${total.toFixed(2)} ج.م`;
         }
         
         window.processPayment = async function(e) {
-            e.preventDefault(); 
-            const btn = e.target.querySelector('button[type="submit"]'); 
-            const orig = btn.textContent; 
-            btn.innerHTML='<i class="fas fa-spinner fa-spin"></i> معالجة...'; 
-            btn.disabled=true;
-            
+            e.preventDefault(); const btn = e.target.querySelector('button[type="submit"]'); const orig = btn.textContent; btn.innerHTML='<i class="fas fa-spinner fa-spin"></i> معالجة...'; btn.disabled=true;
             const paymentOption = document.querySelector('input[name="payment"]:checked').value;
             const paymentMethod = paymentOption === 'card' ? 'فيزا' : (paymentOption === 'vodafone' ? 'فودافون كاش (01029628023)' : 'كاش');
-
-            // --- STOCK REDUCTION LOGIC ---
-            // Reduce stock locally for immediate feedback
             cart.forEach(item => {
                 const productIndex = products.findIndex(p => p.id == item.id);
-                if(productIndex > -1) {
-                    products[productIndex].stock -= item.quantity;
-                    if(products[productIndex].stock < 0) products[productIndex].stock = 0;
-                }
+                if(productIndex > -1) { products[productIndex].stock -= item.quantity; if(products[productIndex].stock < 0) products[productIndex].stock = 0; }
             });
-            // Re-render products to show new stock
             renderProducts(products, false);
-
-            const orderData = { 
-                customerName: document.getElementById('checkout-name').value, 
-                phone: document.getElementById('checkout-phone').value, 
-                address: document.getElementById('checkout-address').value, 
-                items: cart, 
-                total: document.getElementById('checkout-total').textContent, 
-                paymentMethod: paymentMethod,
-                date: new Date().toISOString(), 
-                status: 'new' 
-            };
+            const orderData = { customerName: document.getElementById('checkout-name').value, phone: document.getElementById('checkout-phone').value, address: document.getElementById('checkout-address').value, items: cart, total: document.getElementById('checkout-total').textContent, paymentMethod: paymentMethod, date: new Date().toISOString(), status: 'new' };
             try {
                 await addDoc(collection(db, 'orders'), orderData);
-                showToast(`تم الطلب بنجاح!`, 'success'); 
-                
-                cart=[]; 
-                updateCartUI(); 
-                closeCheckout(); 
-                btn.innerHTML=orig; 
-                btn.disabled=false; 
-                e.target.reset();
-            } catch (error) { 
-                console.error(error); 
-                showToast("حدث خطأ في الاتصال", "error"); 
-                btn.innerHTML=orig; 
-                btn.disabled=false; 
-            }
+                showToast(`تم الطلب بنجاح!`, 'success'); cart=[]; updateCartUI(); closeCheckout(); btn.innerHTML=orig; btn.disabled=false; e.target.reset();
+            } catch (error) { showToast("حدث خطأ في الاتصال", "error"); btn.innerHTML=orig; btn.disabled=false; }
         }
 
-        window.handleSearch = function(val) { const t=val.toLowerCase(); if(!t) { renderProducts(products); return; } const f=products.filter(p=>p.name.includes(t)||p.category.includes(t)); renderProducts(f); }
+        window.handleSearch = function(val) { const t=val.toLowerCase(); if(!t) { renderProducts(products); return; } const f=products.filter(p=>p.name.toLowerCase().includes(t)||p.category.includes(t)); renderProducts(f); }
         window.filterByCategory = function(cat) { document.querySelectorAll('.filter-btn').forEach(b => { if(b.dataset.filter===cat) { b.classList.add('bg-primary','text-white'); b.classList.remove('bg-white','text-slate-600','dark:bg-gray-800','dark:text-gray-300','border'); } else { b.classList.remove('bg-primary','text-white'); b.classList.add('bg-white','text-slate-600','dark:bg-gray-800','dark:text-gray-300','border'); } }); renderProducts(cat==='all'?products:products.filter(p=>p.category===cat)); }
         window.openTrackingModal = function() { document.getElementById('tracking-modal').classList.remove('hidden'); }
         window.closeTrackingModal = function() { document.getElementById('tracking-modal').classList.add('hidden'); }
@@ -822,12 +713,7 @@
         document.getElementById('theme-toggle').onclick = () => { document.documentElement.classList.toggle('dark'); const i=document.querySelector('#theme-toggle i'); if(document.documentElement.classList.contains('dark')) i.className='fas fa-sun text-yellow-300 text-lg'; else i.className='fas fa-moon text-slate-600 text-lg'; };
 
         // Init Calls
-        renderProducts(products, true); 
-        fetchProductsFromDB(); 
-        updateWishlistUI(); 
-        renderRecentlyViewed(); 
-        fetchReviews(); 
-        initObserver();
+        renderProducts(products, true); fetchProductsFromDB(); updateWishlistUI(); renderRecentlyViewed(); fetchReviews(); initObserver();
     </script>
 </body>
 </html>
